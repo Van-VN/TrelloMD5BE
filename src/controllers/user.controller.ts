@@ -1,5 +1,5 @@
 import User from '../models/schemas/user.model';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import Post from '../models/schemas/post.model';
 
