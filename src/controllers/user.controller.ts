@@ -21,7 +21,7 @@ export default class UserController {
         });
         // return await user.save();
         if (await user.save()) {
-          return res.json({ message: 'Tạo thành công người dùng' });
+          return res.json({ success: 'Tạo thành công người dùng' });
         } else {
           return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
         }
