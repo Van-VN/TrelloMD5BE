@@ -19,7 +19,12 @@ export default class UserController {
           password: hashedPassword,
           email: req.body.email
         });
-        return await user.save();
+        if (await user.save()) {
+          return res.json({
+            message: `Tạo tài khoản thành công`
+          });
+
+        }
       }
     } catch (err) {
       console.log(err);
