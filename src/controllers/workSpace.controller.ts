@@ -3,7 +3,18 @@ import WorkSpace from '../models/schemas/workspace.model';
 
 export default class WorkSpaceController {
   static async listWorkspaces(req: any, res: any) {
-    return res.json({ workspaces: await WorkSpace.find({'users.idUser': req.params.userId}) })
+    try {
+      return res.json({ workspaces: await WorkSpace.find({'users.idUser': req.params.userId}) })
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  static async getWorkspace(req: any, res: any) {
+    try {
+      return res.json({ workSpace: await WorkSpace.findOne({ _id: req.params.id }).populate('users.idUser') });
+    } catch (e){
+      console.log(e);
+    }
   }
   static async createWorkspace(req: any, res: any) {
     try {

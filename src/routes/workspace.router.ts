@@ -15,4 +15,9 @@ workSpaceRoute.get(
   '/workspaces/:userId',
   upload.none(),
   WorkSpaceController.listWorkspaces);
+
+workSpaceRoute.get(
+  '/workspace/:id',
+  upload.none(),
+  WorkSpaceController.getWorkspace);
 export default workSpaceRoute;
