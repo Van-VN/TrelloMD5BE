@@ -11,7 +11,11 @@ const userSchema = new Schema({
   },
   bio: { type: String, default: '' },
   jobTitle: { type: String, default: 'Employee' },
-  email: String
+  email: String,
+  securityQuestion: { 
+    question: {type: String, default: 'Con vật bạn thích nhất là gì'},
+    answer: String
+  }
 });
 const User = model('user', userSchema);
 
