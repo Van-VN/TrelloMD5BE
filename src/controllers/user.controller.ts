@@ -76,7 +76,8 @@ export default class UserController {
 
           return res.json({
             accessToken,
-            userData
+            userData,
+            success: 'Đăng nhập thành công!'
           });
         } else {
           return res.json({
