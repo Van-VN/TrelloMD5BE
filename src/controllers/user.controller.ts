@@ -58,13 +58,45 @@ export default class UserController {
           };
           return res.json({
             accessToken,
-            userData
+            userData,
+            success: 'Đăng nhập thành công!'
           });
         } else {
           return res.json({
             message: 'Nhập khẩu vừa nhập vào không chính xác'
           });
         }
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
+    }
+  }
+
+  static async updateUser(req: any, res: any) {
+    try {
+      const user = User.findOne({ _id: req.body.id });
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      if (user) {
+        await User.updateOne(
+          { _id: req.body.userId },
+          {
+            $set: {
+              ...(req.body.bio && { bio: req.body.bio }),
+              ...(req.body.avatarUrl && { avatarUrl: req.body.avatarUrl }),
+              ...(req.body.jobTitle && { gender: req.body.jobTitle }),
+              ...(req.body.password && { password: hashedPassword })
+            }
+          }
+        );
+
+        return res.json({
+          message: `Cập nhật thành công người dùng ${req.body.userName}!`
+        });
+      } else {
+        return res.json({
+          message: 'Không tồn tại người dùng đang muốn thay đổi!'
+        });
       }
     } catch (err) {
       console.log(err);

@@ -6,5 +6,6 @@ const upload = multer();
 
 userRoute.post('/user/create', upload.none(), UserController.createUser);
 userRoute.post('/user/login', upload.none(), UserController.userLogin);
+userRoute.post('/user/update', upload.none(), UserController.updateUser);
 
 export default userRoute;
