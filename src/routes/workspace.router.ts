@@ -11,5 +11,8 @@ workSpaceRoute.post(
   auth,
   WorkSpaceController.createWorkspace
 );
-
+workSpaceRoute.get(
+  '/workspaces/:userId',
+  upload.none(),
+  WorkSpaceController.listWorkspaces);
 export default workSpaceRoute;
