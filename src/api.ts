@@ -11,6 +11,7 @@ import projectRoute from './routes/project.router';
 import columnRoute from './routes/column.router';
 import columnOrderRoute from './routes/columnOrder.router';
 import boardRoute from './routes/board.router';
+import workSpaceRoute from './routes/workspace.router';
 
 db.connect()
   .then((res) => {
@@ -37,6 +38,7 @@ app.use('/api', projectRoute);
 app.use('/api', columnRoute);
 app.use('/api', columnOrderRoute);
 app.use('/api', boardRoute);
+app.use('/api', workSpaceRoute);
 
 app.use(
   session({
