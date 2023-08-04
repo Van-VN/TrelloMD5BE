@@ -15,7 +15,6 @@ export default class UserController {
     UserController.currentUser.userId = userId;
     UserController.currentUser.userName = userName;
     console.log(UserController.currentUser);
-
   }
 
   static async createUser(req: any, res: any) {
@@ -158,6 +157,8 @@ export default class UserController {
           req.body.securityAnswer,
           user.securityQuestion.answer
         );
+        
+        
         if(compareAnswer) {
           const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
           await User.updateOne(
