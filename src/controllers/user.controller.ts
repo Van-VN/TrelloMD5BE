@@ -103,4 +103,17 @@ export default class UserController {
       return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
     }
   }
+
+  static async searchUsers(req: any, res: any) {
+    try {
+      const searchValue = req.query.u;
+      const users = await User.find({
+        userName: { $regex: searchValue, $options: 'i' }
+      });
+      return res.json({ data: users });
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau...' });
+    }
+  }
 }
