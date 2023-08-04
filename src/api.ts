@@ -6,6 +6,11 @@ import passport from 'passport';
 import session from 'express-session';
 import userRoute from './routes/user.router';
 import 'dotenv/config';
+import taskRoute from './routes/task.router';
+import projectRoute from './routes/project.router';
+import columnRoute from './routes/column.router';
+import columnOrderRoute from './routes/columnOrder.router';
+import boardRoute from './routes/board.router';
 
 db.connect()
   .then((res) => {
@@ -27,6 +32,11 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', userRoute);
+app.use('/api', taskRoute);
+app.use('/api', projectRoute);
+app.use('/api', columnRoute);
+app.use('/api', columnOrderRoute);
+app.use('/api', boardRoute);
 
 app.use(
   session({
