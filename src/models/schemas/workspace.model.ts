@@ -10,6 +10,13 @@ const workspaceSchema = new Schema({
       }
     }
   ],
+  users: [{
+    role: { type: String, default: "member"},
+    idUser: {
+      type: Schema.Types.ObjectId,
+      ref: 'user'
+    }
+  }],
   bio: String
 });
 
