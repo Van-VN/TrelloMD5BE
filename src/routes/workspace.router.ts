@@ -2,7 +2,14 @@ import { Router } from 'express';
 import { auth } from '../middleware/auth';
 import WorkSpaceController from '../controllers/workSpace.controller';
 const workSpaceRoute = Router();
+import multer from 'multer';
+const upload = multer();
 
-workSpaceRoute.post('/workspaces', auth, WorkSpaceController.createWorkspace);
+workSpaceRoute.post(
+  '/workspaces',
+  upload.none(),
+  auth,
+  WorkSpaceController.createWorkspace
+);
 
 export default workSpaceRoute;
