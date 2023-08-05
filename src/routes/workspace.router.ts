@@ -14,10 +14,20 @@ workSpaceRoute.post(
 workSpaceRoute.get(
   '/workspaces/:userId',
   upload.none(),
-  WorkSpaceController.listWorkspaces);
+  WorkSpaceController.listWorkspaces
+);
 
 workSpaceRoute.get(
   '/workspace/:id',
   upload.none(),
-  WorkSpaceController.getWorkspace);
+  WorkSpaceController.getWorkspace
+);
+
+workSpaceRoute.post(
+  '/workspace/adduser',
+  upload.none(),
+  auth,
+  WorkSpaceController.addUserToWorkspace
+);
+
 export default workSpaceRoute;
