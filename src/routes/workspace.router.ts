@@ -30,4 +30,18 @@ workSpaceRoute.post(
   WorkSpaceController.addUserToWorkspace
 );
 
+workSpaceRoute.delete(
+  '/workspace/delete/:id',
+  upload.none(),
+  auth,
+  WorkSpaceController.deleteWorkSpace
+);
+
+workSpaceRoute.delete(
+  '/workspace/rmuser',
+  upload.none(),
+  auth,
+  WorkSpaceController.removeUserFromWorkspace
+);
+
 export default workSpaceRoute;
