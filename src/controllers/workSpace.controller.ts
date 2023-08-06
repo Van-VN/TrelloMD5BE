@@ -58,8 +58,12 @@ export default class WorkSpaceController {
             { _id: wsId },
             { $push: { users: { idUser: userId, role: 'member' } } }
           );
+          const data = await WorkSpace.findOne({ _id: wsId }).populate(
+            'users.idUser'
+          );
           return res.json({
-            message: `Thêm người dùng ${user.userName} vào workspace thành công!`
+            message: `Thêm người dùng ${user.userName} vào workspace thành công!`,
+            workspace: data
           });
         } else {
           return res.json({
@@ -72,6 +76,59 @@ export default class WorkSpaceController {
     } catch (err) {
       console.log(err);
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async deleteWorkSpace(req: any, res: any) {
+    try {
+      const ws = await WorkSpace.findOne({ _id: req.params.id });
+      if (ws) {
+        await WorkSpace.findByIdAndDelete({ _id: req.params.id });
+        return res.json({ message: 'Xóa Workspace thành công!' });
+      } else {
+        return res.json({ error: 'Workspace không tồn tại' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại!' });
+    }
+  }
+
+  static async removeUserFromWorkspace(req: any, res: any) {
+    try {
+      const workSpaceId = req.query.w;
+      const userId = req.query.u;
+      const workSpaceCheck = await WorkSpace.findOne({ _id: workSpaceId });
+
+      if (workSpaceCheck) {
+        const userInWSCheck = await WorkSpace.findOne({
+          _id: workSpaceId,
+          users: { $elemMatch: { idUser: userId } }
+        });
+        if (userInWSCheck) {
+          await WorkSpace.updateOne(
+            { _id: workSpaceId },
+            { $pull: { users: { idUser: userId } } }
+          );
+
+          const data = await WorkSpace.findOne({ _id: workSpaceId }).populate(
+            'users.idUser'
+          );
+          return res.json({
+            message: 'Xóa thành công người dùng khỏi workspace',
+            workspace: data
+          });
+        } else {
+          return res.json({
+            error: 'Không tồn tại người dùng trong workspace!'
+          });
+        }
+      } else {
+        return res.json({ error: 'Có lỗi xảy ra, workspace không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
     }
   }
 }
