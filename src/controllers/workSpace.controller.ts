@@ -134,7 +134,7 @@ export default class WorkSpaceController {
 
   static  async updateWorkSpace(req: any, res: any) {
     try {
-      const ws = await WorkSpace.findOne({ _id: req.params.id });
+      const ws = await WorkSpace.findOne({ _id: req.params.id }).populate('users.idUser')
       let message = ''
       if (ws) {
         ws.name = req.body.name;
