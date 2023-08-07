@@ -36,7 +36,7 @@ export default class WorkSpaceController {
         ]
       });
       await workSpace.save();
-      return res.json({ message: 'Tạo workspace thành công' });
+      return res.json({ message: 'Tạo workspace thành công', workSpace: workSpace });
     } catch (err) {
       console.log(err);
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại...' });
@@ -125,6 +125,29 @@ export default class WorkSpaceController {
         }
       } else {
         return res.json({ error: 'Có lỗi xảy ra, workspace không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
+    }
+  }
+
+  static  async updateWorkSpace(req: any, res: any) {
+    try {
+      const ws = await WorkSpace.findOne({ _id: req.params.id });
+      let message = ''
+      if (ws) {
+        ws.name = req.body.name;
+        ws.bio = req.body.bio;
+        if (await ws.save()){
+          message = 'Cập nhật thành công  workspace'
+        } else {
+          message = 'Cập nhật workspace thất bại'
+        }
+        return res.json({
+          message: message,
+          workspace: ws
+        });
       }
     } catch (err) {
       console.log(err);

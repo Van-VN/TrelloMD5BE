@@ -43,5 +43,11 @@ workSpaceRoute.delete(
   auth,
   WorkSpaceController.removeUserFromWorkspace
 );
+workSpaceRoute.post(
+  '/workspace/:id',
+  upload.none(),
+  // auth,
+  WorkSpaceController.updateWorkSpace
+);
 
 export default workSpaceRoute;
