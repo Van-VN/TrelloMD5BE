@@ -11,7 +11,9 @@ const userSchema = new Schema({
   },
   bio: { type: String, default: '' },
   jobTitle: { type: String, default: 'Employee' },
-  email: String
+  email: String,
+  authEmail: { type: Boolean, default: false },
+  tokenAuthEmail:  { type: String, default: '' }
 });
 const User = model('user', userSchema);
 
