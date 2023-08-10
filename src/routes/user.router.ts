@@ -7,7 +7,12 @@ const upload = multer();
 
 userRoute.post('/user/create', upload.none(), UserController.createUser);
 userRoute.post('/user/login', upload.none(), UserController.userLogin);
-userRoute.post('/user/update', upload.none(), UserController.updateUser);
+userRoute.get('/user/info', auth, UserController.getUserInfo);
+userRoute.put('/user/update', auth, UserController.updateUser);
+userRoute.put('/user/password', auth, UserController.resetPassword);
+userRoute.get('/user/confirmEmail/:token', UserController.authEmail);
+userRoute.get('/user/sentNewPassword', UserController.sentNewPassword);
+
 userRoute.get('/user/search', upload.none(), auth, UserController.searchUsers);
 
 export default userRoute;
