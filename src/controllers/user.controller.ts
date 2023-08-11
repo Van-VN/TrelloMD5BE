@@ -129,6 +129,7 @@ export default class UserController {
       const user = await User.findById({
         _id: UserController.currentUser.userId
       });
+      console.log(user);
       res.json({
         message: 'User info',
         user: user
@@ -226,7 +227,7 @@ export default class UserController {
       return res.json({ success: 'Có lỗi xảy ra' });
     }
   }
-  
+
   static async sentEmail(email, subject, content) {
     try {
       if (!email || !subject || !content)
