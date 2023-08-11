@@ -9,7 +9,8 @@ const boardSchema = new Schema({
             ref: 'user' // Tham chiếu đến collection 'user'
         }
     }],
-    visibility: { type: String, default: "WorkSpace"}
+    visibility: { type: String, default: "public"},
+    backgroundImage: { type: String, default: "2.avif"}
 })
 
 const Board = model("board", boardSchema);

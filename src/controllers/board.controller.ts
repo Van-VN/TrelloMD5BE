@@ -1,22 +1,38 @@
 import Board from "../models/schemas/board.model";
 import User from "../models/schemas/user.model";
+import WorkSpace from '../models/schemas/workspace.model';
 
 export default class BoardController {
   static async createBoard(req: any, res: any) {
     try {
-      const titleCheck = await Board.findOne({ title: req.body.title });
+      const workspace = await WorkSpace.findOne({_id: req.body.workspace}).populate('boards.board')
+
+      // @ts-ignore
+      const titleCheck = workspace.boards.some(boardObj => boardObj.board.title === req.body.title);
+      console.log(titleCheck);
       if (titleCheck) {
         return res.json({
-          message: 'Board already exists'
+          errorMessage: 'Board already exists'
         })
       } else {
+        const user = await User.findOne({_id: req.body.userID})
         const board = new Board({
           title: req.body.title,
-          users: []
+          backgroundImage: req.body.backgroundImage,
+          users: [{
+            role: "admin",
+            idUser: user
+          }]
         });
         if (await board.save()) {
+          workspace.boards.push({
+            board: board._id,
+          })
+          workspace.save()
           return res.json({
-            message: `create board successfully`
+            message: `create board successfully`,
+            board: board,
+            workspaceId: workspace._id
           })
         }
 
@@ -24,7 +40,7 @@ export default class BoardController {
     } catch (error) {
       console.log(error);
       return res.json({
-        message: `Something went wrong`
+        errorMessage: `Something went wrong`
       })
     }
   }
