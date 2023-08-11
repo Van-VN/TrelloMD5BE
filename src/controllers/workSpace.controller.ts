@@ -17,7 +17,7 @@ export default class WorkSpaceController {
       return res.json({
         workSpace: await WorkSpace.findOne({ _id: req.params.id }).populate(
           'users.idUser'
-        )
+        ).populate('boards.board')
       });
     } catch (e) {
       console.log(e);
