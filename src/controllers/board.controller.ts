@@ -9,7 +9,6 @@ export default class BoardController {
 
       // @ts-ignore
       const titleCheck = workspace.boards.some(boardObj => boardObj.board.title === req.body.title);
-      console.log(titleCheck);
       if (titleCheck) {
         return res.json({
           errorMessage: 'Board already exists'
