@@ -44,8 +44,14 @@ export default class ColumnController {
           { _id: req.body.columnId },
           { $push: { tasks: newTask._id } }
         );
-        // const columnToFe = await Column.findOne({ _id: req.body.columnId });
-        return res.json({ data: newTask });
+        const columnToFe = await Column.findOne({
+          _id: req.body.columnId
+        }).populate('tasks');
+        const board = await Board.findOne({ _id: req.body.boardId }).populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        });
+        return res.json({ data: newTask, column: columnToFe, board: board });
       } else {
         return res.json({ error: 'Column không tồn tại!' });
       }
