@@ -14,7 +14,6 @@ export default class BoardController {
         // @ts-ignore
         (boardObj) => boardObj.board.title === req.body.title
       );
-      console.log(titleCheck);
       if (titleCheck) {
         return res.json({
           errorMessage: 'Board already exists'
@@ -85,13 +84,38 @@ export default class BoardController {
 
   static async getBoardDetail(req: any, res: any) {
     try {
-      const board = await Board.findOne({ _id: req.params.id }).populate(
-        'columns'
-      );
-      console.log(board);
-      res.json({ board: board });
+      const board = await Board.findOne({ _id: req.params.id }).populate({
+        path: 'columns',
+        populate: { path: 'tasks', model: 'task' }
+      });
+      return res.json({ board: board });
     } catch (err) {
       console.log(err);
+    }
+  }
+
+  static async updateDragDrop(req: any, res: any) {
+    try {
+      const board = await Board.findOne({ _id: req.body.board });
+      if (board) {
+        const updatedCol = req.body.array;
+        await Board.updateOne(
+          { _id: req.body.board },
+          { $set: { columns: updatedCol } }
+        );
+        const dataToFe = await Board.findOne({ _id: req.body.board }).populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        });
+        return res.json({
+          board: dataToFe
+        });
+      } else {
+        return res.json({ error: 'Bảng không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }
   }
 }

@@ -35,7 +35,6 @@ export default class UserController {
   static setCurrentUser(userId: string, userName: string) {
     UserController.currentUser.userId = userId;
     UserController.currentUser.userName = userName;
-    console.log(UserController.currentUser);
   }
 
   static async createUser(req: any, res: any) {
@@ -170,7 +169,6 @@ export default class UserController {
         user.password
       );
       if (comparePassword) {
-        console.log('Đúng pass');
         if (req.body.newPassword !== req.body.checkNewPassword) {
           return res.json({ message: 'Mật khẩu mới không trùng nhau' });
         } else {
@@ -269,7 +267,6 @@ export default class UserController {
   }
   static async authEmail(req: any, res: any) {
     try {
-      console.log(req.params.token);
       const user = await User.findOne({ tokenAuthEmail: req.params.token });
       user.authEmail = true;
       user

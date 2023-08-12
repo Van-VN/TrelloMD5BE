@@ -19,5 +19,23 @@ boardRoute.post(
   auth,
   ColumnController.addColumnToBoard
 );
+boardRoute.patch(
+  '/b/update',
+  upload.none(),
+  auth,
+  BoardController.updateDragDrop
+);
+boardRoute.post(
+  '/b/addTask',
+  upload.none(),
+  auth,
+  ColumnController.addTaskToCol
+);
+boardRoute.patch(
+  '/b/updateDragTask',
+  upload.none(),
+  auth,
+  ColumnController.updateDragDropTask
+);
 
 export default boardRoute;
