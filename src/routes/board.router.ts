@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import BoardController from '../controllers/board.controller';
+import ColumnController from '../controllers/column.controller';
 import { auth } from '../middleware/auth';
 const boardRoute = Router();
 import multer from 'multer';
@@ -12,5 +13,29 @@ boardRoute.put(
   BoardController.addMember
 );
 boardRoute.get('/b/:id', auth, BoardController.getBoardDetail);
+boardRoute.post(
+  '/b/addColumn',
+  upload.none(),
+  auth,
+  ColumnController.addColumnToBoard
+);
+boardRoute.patch(
+  '/b/update',
+  upload.none(),
+  auth,
+  BoardController.updateDragDrop
+);
+boardRoute.post(
+  '/b/addTask',
+  upload.none(),
+  auth,
+  ColumnController.addTaskToCol
+);
+boardRoute.patch(
+  '/b/updateDragTask',
+  upload.none(),
+  auth,
+  ColumnController.updateDragDropTask
+);
 
 export default boardRoute;
