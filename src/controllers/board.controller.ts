@@ -85,7 +85,10 @@ export default class BoardController {
 
   static async getBoardDetail(req: any, res: any) {
     try {
-      const board = await Board.findOne({ _id: req.params.id });
+      const board = await Board.findOne({ _id: req.params.id }).populate(
+        'columns'
+      );
+      console.log(board);
       res.json({ board: board });
     } catch (err) {
       console.log(err);
