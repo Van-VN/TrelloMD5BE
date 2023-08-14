@@ -37,5 +37,11 @@ boardRoute.patch(
   auth,
   ColumnController.updateDragDropTask
 );
+boardRoute.patch(
+  '/b/updateTaskTitle',
+  upload.none(),
+  auth,
+  ColumnController.updateTaskTitle
+);
 
 export default boardRoute;

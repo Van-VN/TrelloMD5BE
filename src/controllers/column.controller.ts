@@ -95,4 +95,26 @@ export default class ColumnController {
       console.log(err);
     }
   }
+
+  static async updateTaskTitle(req: any, res: any) {
+    try {
+      const task = await Task.findOne({ _id: req.body.taskId });
+      if (task) {
+        await Task.updateOne(
+          { _id: req.body.taskId },
+          { content: req.body.title }
+        );
+        const board = await Board.findOne({ _id: req.body.boardId }).populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        });
+        return res.json({ board: board });
+      } else {
+        return res.json({ error: 'Task không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
 }
