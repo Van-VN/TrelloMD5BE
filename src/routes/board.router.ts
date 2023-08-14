@@ -43,5 +43,17 @@ boardRoute.patch(
   auth,
   ColumnController.updateTaskTitle
 );
+boardRoute.post(
+  '/b/getTaskInfo',
+  upload.none(),
+  auth,
+  BoardController.getTaskInfo
+);
+boardRoute.post(
+  '/b/updateTaskDescription',
+  upload.none(),
+  auth,
+  BoardController.updateTaskDescription
+);
 
 export default boardRoute;

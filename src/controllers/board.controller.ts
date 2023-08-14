@@ -1,4 +1,5 @@
 import Board from '../models/schemas/board.model';
+import Task from '../models/schemas/task.model';
 import User from '../models/schemas/user.model';
 import WorkSpace from '../models/schemas/workspace.model';
 
@@ -112,6 +113,44 @@ export default class BoardController {
         });
       } else {
         return res.json({ error: 'Bảng không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async getTaskInfo(req: any, res: any) {
+    try {
+      const task = await Task.findOne({ _id: req.body.taskId });
+      if (task) {
+        return res.json({ task: task });
+      } else {
+        return res.json({ error: 'Task không tồn tại !' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async updateTaskDescription(req: any, res: any) {
+    console.log(req.body);
+    try {
+      const task = await Task.findOne({ _id: req.body.taskId });
+      const board = await Board.findOne({ _id: req.body.boardId });
+      if (task && board) {
+        await Task.updateOne(
+          { _id: req.body.taskId },
+          { description: req.body.description }
+        );
+        const board = await Board.findOne({ _id: req.body.boardId }).populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        });
+        return res.json({ board: board });
+      } else {
+        return res.json({ error: 'Task hoặc bảng không tồn tại !' });
       }
     } catch (err) {
       console.log(err);
