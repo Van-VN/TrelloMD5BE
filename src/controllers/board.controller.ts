@@ -1,31 +1,52 @@
-import Board from "../models/schemas/board.model";
-import User from "../models/schemas/user.model";
+import Board from '../models/schemas/board.model';
+import User from '../models/schemas/user.model';
+import WorkSpace from '../models/schemas/workspace.model';
 
 export default class BoardController {
   static async createBoard(req: any, res: any) {
     try {
-      const titleCheck = await Board.findOne({ title: req.body.title });
+      const workspace = await WorkSpace.findOne({
+        _id: req.body.workspace
+      }).populate('boards.board');
+
+      // @ts-ignore
+      const titleCheck = workspace.boards.some(
+        // @ts-ignore
+        (boardObj) => boardObj.board.title === req.body.title
+      );
       if (titleCheck) {
         return res.json({
-          message: 'Board already exists'
-        })
+          errorMessage: 'Board already exists'
+        });
       } else {
+        const user = await User.findOne({ _id: req.body.userID });
         const board = new Board({
           title: req.body.title,
-          users: []
+          backgroundImage: req.body.backgroundImage,
+          users: [
+            {
+              role: 'admin',
+              idUser: user
+            }
+          ]
         });
         if (await board.save()) {
+          workspace.boards.push({
+            board: board._id
+          });
+          workspace.save();
           return res.json({
-            message: `create board successfully`
-          })
+            message: `create board successfully`,
+            board: board,
+            workspaceId: workspace._id
+          });
         }
-
       }
     } catch (error) {
       console.log(error);
       return res.json({
-        message: `Something went wrong`
-      })
+        errorMessage: `Something went wrong`
+      });
     }
   }
   static async addMember(req: any, res: any) {
@@ -37,7 +58,9 @@ export default class BoardController {
         message: `User ${req.params.nameMember} does not exist`
       });
     } else {
-      const isIdUser = boardCheck.users.some(user => user.idUser.toString() === userCheck._id.toString());
+      const isIdUser = boardCheck.users.some(
+        (user) => user.idUser.toString() === userCheck._id.toString()
+      );
       if (isIdUser) {
         return res.json({
           message: `User ${req.params.nameMember} already on board`
@@ -45,18 +68,54 @@ export default class BoardController {
       } else {
         boardCheck.users.push({
           idUser: userCheck._id,
-          role: ""
-        })
+          role: ''
+        });
         await Board.updateOne(
           { _id: req.params.idBoard },
           { $set: { users: boardCheck.users } }
-        )
+        );
 
         return res.json({
           message: `Add member ${req.params.nameMember} successfully`
         });
       }
+    }
+  }
 
+  static async getBoardDetail(req: any, res: any) {
+    try {
+      const board = await Board.findOne({ _id: req.params.id }).populate({
+        path: 'columns',
+        populate: { path: 'tasks', model: 'task' }
+      });
+      return res.json({ board: board });
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  static async updateDragDrop(req: any, res: any) {
+    try {
+      const board = await Board.findOne({ _id: req.body.board });
+      if (board) {
+        const updatedCol = req.body.array;
+        await Board.updateOne(
+          { _id: req.body.board },
+          { $set: { columns: updatedCol } }
+        );
+        const dataToFe = await Board.findOne({ _id: req.body.board }).populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        });
+        return res.json({
+          board: dataToFe
+        });
+      } else {
+        return res.json({ error: 'Bảng không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }
   }
 }
