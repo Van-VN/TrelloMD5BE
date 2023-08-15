@@ -45,13 +45,13 @@ workSpaceRoute.delete(
 );
 workSpaceRoute.put(
   '/workspace/updateUser',
-  auth, 
+  auth,
   WorkSpaceController.updateUserPermission
 );
 workSpaceRoute.post(
   '/workspace/:id',
   upload.none(),
-  // auth,
+  auth,
   WorkSpaceController.updateWorkSpace
 );
 
