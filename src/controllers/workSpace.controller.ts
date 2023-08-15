@@ -132,14 +132,52 @@ export default class WorkSpaceController {
     }
   }
 
-  static  async updateWorkSpace(req: any, res: any) {
+  static async updateUserPermission(req: any, res: any) {
+    try {
+      const workSpaceId = req.query.w;
+      const userId = req.query.u;
+      const userNewRole = req.query.r;
+      const workSpaceCheck = await WorkSpace.findOne({ _id: workSpaceId });
+
+      if (workSpaceCheck) {
+        const userInWSCheck = await WorkSpace.findOne({
+          _id: workSpaceId,
+          users: { $elemMatch: { idUser: userId } }
+        });
+        if (userInWSCheck) {
+          await WorkSpace.updateOne(
+            { _id: workSpaceId, 'users.idUser': userId }, // Tìm workspace và user cần cập nhật
+            { $set: { 'users.$.role': userNewRole } } // Thay đổi giá trị của role cho user cụ thể
+          );
+
+          const data = await WorkSpace.findOne({ _id: workSpaceId }).populate(
+            'users.idUser'
+          );
+          return res.json({
+            message: 'Thay đổi thành công user permission',
+            workspace: data
+          });
+        } else {
+          return res.json({
+            error: 'Không tồn tại người dùng trong workspace!'
+          });
+        }
+      } else {
+        return res.json({ error: 'Có lỗi xảy ra, workspace không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
+    }
+  }
+  static async updateWorkSpace(req: any, res: any) {
     try {
       const ws = await WorkSpace.findOne({ _id: req.params.id }).populate('users.idUser')
       let message = ''
       if (ws) {
         ws.name = req.body.name;
         ws.bio = req.body.bio;
-        if (await ws.save()){
+        if (await ws.save()) {
           message = 'Cập nhật thành công  workspace'
         } else {
           message = 'Cập nhật workspace thất bại'

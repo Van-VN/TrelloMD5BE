@@ -40,9 +40,14 @@ export default class UserController {
   static async createUser(req: any, res: any) {
     try {
       const userCheck = await User.find({ userName: req.body.userName });
+      const emailCheck = await User.findOne({ email: req.body.email });
       if (userCheck.length !== 0) {
         return res.json({
           message: `Đã tồn tại người dùng với username: ${req.body.userName}`
+        });
+      } else if (emailCheck) {
+        return res.json({
+          message: `Email ${req.body.email} đã được đăng ký`
         });
       } else {
         const generateRandomToken = () => {
@@ -171,21 +176,23 @@ export default class UserController {
       if (comparePassword) {
         if (req.body.newPassword !== req.body.checkNewPassword) {
           return res.json({ message: 'Mật khẩu mới không trùng nhau' });
-        } else {
-          const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
-          await User.updateOne(
-            { _id: UserController.currentUser.userId },
-            {
-              $set: {
-                ...(req.body.password && { password: hashedPassword })
+
+          } else {
+            const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+            await User.updateOne(
+              { _id: UserController.currentUser.userId },
+              {
+                $set: {
+                  ...(req.body.password && { password: hashedPassword })
+                }
               }
-            }
-          );
-          return res.json({ message: 'Mật khẩu đã được cập nhật' });
+            );
+            return res.json({ message: 'Mật khẩu đã được cập nhật' });
+          }
+        } else {
+          return res.json({ message: 'Mật khẩu cũ không đúng' });
         }
-      } else {
-        return res.json({ message: 'Mật khẩu cũ không đúng' });
-      }
+      
     } catch (error) {
       return res.json({ message: 'Bạn cần đăng nhập trước đã' });
     }
