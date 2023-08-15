@@ -12,6 +12,12 @@ boardRoute.put(
   auth,
   BoardController.addMember
 );
+boardRoute.patch(
+  '/b/updateBoardTitle',
+  upload.none(),
+  auth,
+  BoardController.updateBoardTitle
+);
 boardRoute.get('/b/:id', auth, BoardController.getBoardDetail);
 boardRoute.post(
   '/b/addColumn',
