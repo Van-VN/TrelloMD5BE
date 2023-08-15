@@ -95,6 +95,28 @@ export default class BoardController {
     }
   }
 
+  static async updateBoardTitle(req: any, res: any) {
+    try {
+      const board = await Board.findOne({ _id: req.body.boardId });
+      if (board) {
+        await Board.updateOne(
+          { _id: req.body.boardId },
+          { title: req.body.title }
+        );
+        const board = await Board.findOne({ _id: req.body.boardId }).populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        });
+        return res.json({ board: board });
+      } else {
+        return res.json({ error: 'Bảng không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại!' });
+    }
+  }
+
   static async updateDragDrop(req: any, res: any) {
     try {
       const board = await Board.findOne({ _id: req.body.board });
