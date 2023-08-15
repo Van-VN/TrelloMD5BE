@@ -197,6 +197,10 @@ export default class UserController {
       if (!user) {
         return res.json({ success: 'Email không tồn tại trong hệ thống' });
       } else {
+        const isCurrentPasswordValid = await bcrypt.compare(req.body.currentPassword, user.password);
+        if (!isCurrentPasswordValid) {
+          return res.json({ success: 'Mật khẩu hiện tại không đúng' });
+        }
         const generateRandomToken = () => {
           return crypto.randomBytes(10).toString('hex');
         };
