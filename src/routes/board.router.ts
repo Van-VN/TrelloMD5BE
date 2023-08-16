@@ -61,5 +61,11 @@ boardRoute.post(
   auth,
   BoardController.updateTaskDescription
 );
+boardRoute.post(
+  '/b/addFileToTask',
+  upload.none(),
+  auth,
+  BoardController.addFileToTask
+);
 
 export default boardRoute;
