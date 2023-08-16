@@ -9,6 +9,7 @@ const boardSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'user' // Tham chiếu đến collection 'user'
       }
+
     }
   ],
   columns: [
