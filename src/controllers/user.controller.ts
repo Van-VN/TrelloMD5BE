@@ -24,18 +24,6 @@ myOAuth2Client.setCredentials({
 });
 
 export default class UserController {
-  static currentUser: {
-    //! lưu trữ một vài thuộc tính của current User để sử dụng lại
-    userId: string;
-    userName: string;
-  } = {
-    userId: '',
-    userName: ''
-  };
-  static setCurrentUser(userId: string, userName: string) {
-    UserController.currentUser.userId = userId;
-    UserController.currentUser.userName = userName;
-  }
 
   static async createUser(req: any, res: any) {
     try {
@@ -109,7 +97,6 @@ export default class UserController {
             jobTitle: user.jobTitle,
             email: user.email
           };
-          UserController.setCurrentUser(user._id.toString(), user.userName);
 
           return res.json({
             accessToken,
@@ -129,9 +116,10 @@ export default class UserController {
   }
 
   static async getUserInfo(req: any, res: any) {
+    const userId = req.params.userId
     try {
       const user = await User.findById({
-        _id: UserController.currentUser.userId
+        _id: userId
       });
       console.log(user);
       res.json({
@@ -144,9 +132,11 @@ export default class UserController {
   }
 
   static async updateUser(req: any, res: any) {
+    const userId = req.params.userId
+
     try {
       await User.updateOne(
-        { _id: UserController.currentUser.userId },
+        { _id: userId },
         {
           $set: {
             ...(req.body.bio && { bio: req.body.bio }),
@@ -164,9 +154,11 @@ export default class UserController {
   }
 
   static async resetPassword(req: any, res: any) {
+    const userId = req.params.userId
+
     try {
       const user = await User.findOne({
-        _id: UserController.currentUser.userId
+        _id: userId
       });
 
       const comparePassword = await bcrypt.compare(
@@ -180,7 +172,7 @@ export default class UserController {
           } else {
             const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
             await User.updateOne(
-              { _id: UserController.currentUser.userId },
+              { _id: userId },
               {
                 $set: {
                   ...(req.body.password && { password: hashedPassword })

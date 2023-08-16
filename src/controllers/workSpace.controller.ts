@@ -1,5 +1,6 @@
 import User from '../models/schemas/user.model';
 import WorkSpace from '../models/schemas/workspace.model';
+import UserController from './user.controller';
 // import { Schema } from 'mongoose';
 
 export default class WorkSpaceController {
@@ -57,6 +58,13 @@ export default class WorkSpaceController {
           user.idUser.equals(userId)
         );
         if (!userDupplicateCheck) {
+
+          UserController.sentEmail("duynguyen.3595@gmail.com", "Lời mời vào workspace", "content").then(() => {
+            console.log('sent successful');
+          })
+          .catch((err) => console.log(err));
+
+
           await WorkSpace.updateOne(
             { _id: wsId },
             { $push: { users: { idUser: userId, role: 'member' } } }
@@ -64,6 +72,8 @@ export default class WorkSpaceController {
           const data = await WorkSpace.findOne({ _id: wsId }).populate(
             'users.idUser'
           );
+
+
           return res.json({
             message: `Thêm người dùng ${user.userName} vào workspace thành công!`,
             workspace: data
