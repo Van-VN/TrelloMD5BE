@@ -8,7 +8,8 @@ const taskSchema = new Schema({
       ref: 'user'
     }
   ],
-  description: String
+  description: String,
+  files: []
 });
 const Task = model('task', taskSchema);
 

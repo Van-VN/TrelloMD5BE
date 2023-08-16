@@ -183,4 +183,67 @@ export default class BoardController {
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }
   }
+
+  static async addFileToTask(req: any, res: any) {
+    try {
+      const task = await Task.findOne({ _id: req.body.taskId });
+      const board = await Board.findOne({ _id: req.body.boardId });
+      if (task && board) {
+        const filesUpload = {
+          name: req.body.name,
+          url: req.body.url,
+          type: req.body.type
+        };
+        Task.updateOne(
+          { _id: req.body.taskId },
+          {
+            $push: {
+              files: filesUpload
+            }
+          }
+        ).exec();
+        const boardToFE = await Board.findOne({
+          _id: req.body.boardId
+        }).populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        });
+        return res.json({ board: boardToFE });
+      } else {
+        return res.json({ error: 'Bảng hoặc task không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async deleteFileOnTask(req: any, res: any) {
+    try {
+      const task = await Task.findOne({ _id: req.body.taskId });
+      const board = await Board.findOne({ _id: req.body.boardId });
+      if (task && board) {
+        Task.updateOne(
+          { _id: req.body.taskId },
+          {
+            $pull: {
+              files: { url: req.body.url }
+            }
+          }
+        ).exec();
+        const boardToFE = await Board.findOne({
+          _id: req.body.boardId
+        }).populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        });
+        return res.json({ board: boardToFE });
+      } else {
+        return res.json({ error: 'Bảng hoặc task không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
 }

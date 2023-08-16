@@ -67,5 +67,17 @@ boardRoute.post(
   auth,
   BoardController.updateTaskDescription
 );
+boardRoute.post(
+  '/b/addFileToTask',
+  upload.none(),
+  auth,
+  BoardController.addFileToTask
+);
+boardRoute.patch(
+  '/b/deleteFileOnTask',
+  upload.none(),
+  auth,
+  BoardController.deleteFileOnTask
+);
 
 export default boardRoute;
