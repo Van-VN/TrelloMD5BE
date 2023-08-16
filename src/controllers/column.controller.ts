@@ -97,7 +97,6 @@ export default class ColumnController {
     }
   }
 
-<<<<<<< HEAD
   static async updateTaskTitle(req: any, res: any) {
     try {
       const task = await Task.findOne({ _id: req.body.taskId });
@@ -113,7 +112,12 @@ export default class ColumnController {
         return res.json({ board: board });
       } else {
         return res.json({ error: 'Task không tồn tại!' });
-=======
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
   static async addUserToBoard(req: any, res: any) {
     try {
       const userId = req.body.userId;
@@ -143,7 +147,6 @@ export default class ColumnController {
         }
       } else {
         return res.json({ error: 'Người dùng hoặc board không tồn tại' });
->>>>>>> 0ceb1fa (add-user-to-board)
       }
     } catch (err) {
       console.log(err);
