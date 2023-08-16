@@ -121,7 +121,6 @@ export default class UserController {
       const user = await User.findById({
         _id: userId
       });
-      console.log(user);
       res.json({
         message: 'User info',
         user: user

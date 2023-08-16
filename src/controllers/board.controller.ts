@@ -20,14 +20,14 @@ export default class BoardController {
           errorMessage: 'Board already exists'
         });
       } else {
-        const user = await User.findOne({ _id: req.body.userID });
+        const user = await User.findOne({ _id: req.body.userId });
         const board = new Board({
           title: req.body.title,
           backgroundImage: req.body.backgroundImage,
           users: [
             {
               role: 'admin',
-              idUser: user
+              idUser: user._id
             }
           ]
         });
@@ -35,7 +35,9 @@ export default class BoardController {
           workspace.boards.push({
             board: board._id
           });
+
           workspace.save();
+
           return res.json({
             message: `create board successfully`,
             board: board,
@@ -88,7 +90,9 @@ export default class BoardController {
       const board = await Board.findOne({ _id: req.params.id }).populate({
         path: 'columns',
         populate: { path: 'tasks', model: 'task' }
-      });
+      }).populate(
+        'users.idUser'
+      );
       return res.json({ board: board });
     } catch (err) {
       console.log(err);

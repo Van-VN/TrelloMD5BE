@@ -43,6 +43,12 @@ boardRoute.patch(
   auth,
   ColumnController.updateDragDropTask
 );
+boardRoute.post(
+  '/b/add-user',
+  upload.none(),
+  auth,
+  ColumnController.addUserToBoard
+);
 boardRoute.patch(
   '/b/updateTaskTitle',
   upload.none(),

@@ -1,6 +1,7 @@
 import Board from '../models/schemas/board.model';
 import Column from '../models/schemas/column.model';
 import Task from '../models/schemas/task.model';
+import User from '../models/schemas/user.model';
 
 export default class ColumnController {
   static async CreateColection(req: any, res: any) {
@@ -111,6 +112,41 @@ export default class ColumnController {
         return res.json({ board: board });
       } else {
         return res.json({ error: 'Task không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+  static async addUserToBoard(req: any, res: any) {
+    try {
+      const userId = req.body.userId;
+      const boardId = req.body.boardId;
+      const user = await User.findOne({ _id: userId });
+      const board = await Board.findOne({_id : boardId})
+      if (board && user) {
+        const userDupplicateCheck = board.users.some((user) =>
+          user.idUser.equals(userId)
+        );
+        if (!userDupplicateCheck) {
+          await Board.updateOne(
+            { _id:  boardId},
+            { $push: { users: { idUser: userId, role: req.body.roll } } }
+          );
+          const data = await Board.findOne({ _id: boardId }).populate(
+            'users.idUser'
+          );
+          return res.json({
+            message: `Thêm người dùng ${user.userName} vào board thành công!`,
+            board: data
+          });
+        } else {
+          return res.json({
+            error: `Đã tồn tại người dùng ${user.userName} trong board`
+          });
+        }
+      } else {
+        return res.json({ error: 'Người dùng hoặc board không tồn tại' });
       }
     } catch (err) {
       console.log(err);
