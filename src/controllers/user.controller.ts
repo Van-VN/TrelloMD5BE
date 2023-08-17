@@ -10,7 +10,7 @@ const GOOGLE_MAILER_CLIENT_ID =
   '991351297491-nvc4frjhcq7873thseuk7b2lpr0fnh79.apps.googleusercontent.com';
 const GOOGLE_MAILER_CLIENT_SECRET = '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';
 const GOOGLE_MAILER_REFRESH_TOKEN =
-  '1//04kRzpx_HeBwVCgYIARAAGAQSNwF-L9IrD6yNjVmizmkWQuzmtgVWDaACCmb1q5s2Bc94bzwOD7Aq74uzB-3TOYcA2FKYHC4fkI4';
+  '1//045hEYqaVuK8JCgYIARAAGAQSNwF-L9Irm6CGHsqaHOMT40iJ9wr2Q5lTlZFPPxNv_ipYKlD8jx1dbkUdQXvzGaP7mJw2HdpAEZI';
 const ADMIN_EMAIL_ADDRESS = 'mach0jc0d0n14@gmail.com';
 
 // Khởi tạo OAuth2Client với Client ID và Client Secret
@@ -95,7 +95,8 @@ export default class UserController {
             avatarUrl: user.avatarUrl,
             bio: user.bio,
             jobTitle: user.jobTitle,
-            email: user.email
+            email: user.email,
+            authEmail: user.authEmail,
           };
 
           return res.json({
@@ -194,7 +195,7 @@ export default class UserController {
     try {
       const user = await User.findOne({ email: req.body.email });
       if (!user) {
-        return res.json({ success: 'Email không tồn tại trong hệ thống' });
+        return res.json({ message: 'Email không tồn tại trong hệ thống' });
       } else {
         const generateRandomToken = () => {
           return crypto.randomBytes(10).toString('hex');
@@ -221,7 +222,7 @@ export default class UserController {
         return res.json({ success: 'Đã gửi email reset mật khẩu thành công' });
       }
     } catch (error) {
-      return res.json({ success: 'Có lỗi xảy ra' });
+      return res.json({ message: 'Có lỗi xảy ra' });
     }
   }
 
