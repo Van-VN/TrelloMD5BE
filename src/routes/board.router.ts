@@ -49,6 +49,12 @@ boardRoute.post(
   auth,
   ColumnController.addUserToBoard
 );
+boardRoute.post(
+  '/b/change-role',
+  upload.none(),
+  auth,
+  ColumnController.changeRole
+);
 boardRoute.patch(
   '/b/updateTaskTitle',
   upload.none(),
