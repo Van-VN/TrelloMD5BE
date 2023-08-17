@@ -74,6 +74,12 @@ boardRoute.post(
   BoardController.updateTaskDescription
 );
 boardRoute.post(
+  '/b/deleteUserFromBoard',
+  upload.none(),
+  auth,
+  BoardController.deleteUserFromBoard
+);
+boardRoute.post(
   '/b/addFileToTask',
   upload.none(),
   auth,
