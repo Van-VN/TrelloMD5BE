@@ -166,7 +166,6 @@ export default class ColumnController {
         if (isIdUser){
           board.users = board.users.map((user, index) => {
             if (user.idUser._id.toString() === req.body.idUser) {
-              console.log(index);
               user.role = req.body.role;
             }
             return user;
