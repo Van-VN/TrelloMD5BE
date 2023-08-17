@@ -51,7 +51,9 @@ export default class ColumnController {
         const board = await Board.findOne({ _id: req.body.boardId }).populate({
           path: 'columns',
           populate: { path: 'tasks', model: 'task' }
-        });
+        }).populate(
+          'users.idUser'
+        );
         return res.json({ data: newTask, column: columnToFe, board: board });
       } else {
         return res.json({ error: 'Column không tồn tại!' });
@@ -87,7 +89,9 @@ export default class ColumnController {
         }).populate({
           path: 'columns',
           populate: { path: 'tasks', model: 'task' }
-        });
+        }).populate(
+          'users.idUser'
+        );
         return res.json({ board: boardToFe });
       } else {
         return res.json({ error: 'Cột không tồn tại!' });
@@ -149,6 +153,37 @@ export default class ColumnController {
         return res.json({ error: 'Người dùng hoặc board không tồn tại' });
       }
     } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async changeRole(req: any, res: any){
+    try{
+      let board = await Board.findOne({_id: req.body.boardId}).populate(
+        'users.idUser'
+      );
+      if(board){
+        const isIdUser = board.users.some(
+          (user) => (user.idUser._id.toString() === req.body.currentUserId && user.role === "admin")
+        );
+        if (isIdUser){
+          board.users = board.users.map((user, index) => {
+            if (user.idUser._id.toString() === req.body.idUser) {
+              user.role = req.body.role;
+            }
+            return user;
+          });
+          if(board.save()){
+            res.json({ message: "Cập nhật quyền thành công", board: board})
+          }
+        } else {
+          res.json({ error: "Bạn không phải admin hoặc không tìm thấy board!"});
+        }
+      } else {
+        res.json({ error: "Bạn không phải admin hoặc không tìm thấy board!"})
+      }
+    } catch (err){
       console.log(err);
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }
