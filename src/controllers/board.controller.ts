@@ -24,6 +24,7 @@ export default class BoardController {
         const board = new Board({
           title: req.body.title,
           backgroundImage: req.body.backgroundImage,
+          visibility: req.body.visibility,
           users: [
             {
               role: 'admin',

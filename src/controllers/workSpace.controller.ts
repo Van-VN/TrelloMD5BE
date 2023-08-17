@@ -49,22 +49,25 @@ export default class WorkSpaceController {
 
   static async addUserToWorkspace(req: any, res: any) {
     try {
-      const userId = req.body.userId;
+      
+      const userId = req.body.userId; 
       const wsId = req.body.wsId;
-      const user = await User.findOne({ _id: userId });
+      const user = await User.findOne({ _id: userId }); //! User duoc moi vao WS
       const workspace = await WorkSpace.findOne({ _id: wsId });
+      console.log(user.email);
+      
       if (workspace && user) {
         const userDupplicateCheck = workspace.users.some((user) =>
           user.idUser.equals(userId)
         );
         if (!userDupplicateCheck) {
-
-          UserController.sentEmail("duynguyen.3595@gmail.com", "Lời mời vào workspace", "content").then(() => {
+          //! gửi email xac nhan
+          const content = `Bạn được mời vào WorkSpace ${workspace.name}. Vui lòng click vào link để xác nhận or từ chối http://localhost:5173/inviteWs/${userId} `
+          
+          UserController.sentEmail(user.email, "Lời mời vào workspace", content).then(() => {
             console.log('sent successful');
           })
           .catch((err) => console.log(err));
-
-
           await WorkSpace.updateOne(
             { _id: wsId },
             { $push: { users: { idUser: userId, role: 'member' } } }
