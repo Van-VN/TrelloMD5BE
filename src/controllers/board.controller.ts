@@ -87,12 +87,12 @@ export default class BoardController {
 
   static async getBoardDetail(req: any, res: any) {
     try {
-      const board = await Board.findOne({ _id: req.params.id }).populate({
-        path: 'columns',
-        populate: { path: 'tasks', model: 'task' }
-      }).populate(
-        'users.idUser'
-      );
+      const board = await Board.findOne({ _id: req.params.id })
+        .populate({
+          path: 'columns',
+          populate: { path: 'tasks', model: 'task' }
+        })
+        .populate('users.idUser');
       return res.json({ board: board });
     } catch (err) {
       console.log(err);
@@ -107,12 +107,12 @@ export default class BoardController {
           { _id: req.body.boardId },
           { title: req.body.title }
         );
-        const board = await Board.findOne({ _id: req.body.boardId }).populate({
-          path: 'columns',
-          populate: { path: 'tasks', model: 'task' }
-        }).populate(
-          'users.idUser'
-        );
+        const board = await Board.findOne({ _id: req.body.boardId })
+          .populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          })
+          .populate('users.idUser');
         return res.json({ board: board });
       } else {
         return res.json({ error: 'Bảng không tồn tại!' });
@@ -132,12 +132,12 @@ export default class BoardController {
           { _id: req.body.board },
           { $set: { columns: updatedCol } }
         );
-        const dataToFe = await Board.findOne({ _id: req.body.board }).populate({
-          path: 'columns',
-          populate: { path: 'tasks', model: 'task' }
-        }).populate(
-          'users.idUser'
-        );
+        const dataToFe = await Board.findOne({ _id: req.body.board })
+          .populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          })
+          .populate('users.idUser');
         return res.json({
           board: dataToFe
         });
@@ -165,7 +165,6 @@ export default class BoardController {
   }
 
   static async updateTaskDescription(req: any, res: any) {
-    console.log(req.body);
     try {
       const task = await Task.findOne({ _id: req.body.taskId });
       const board = await Board.findOne({ _id: req.body.boardId });
@@ -174,12 +173,12 @@ export default class BoardController {
           { _id: req.body.taskId },
           { description: req.body.description }
         );
-        const board = await Board.findOne({ _id: req.body.boardId }).populate({
-          path: 'columns',
-          populate: { path: 'tasks', model: 'task' }
-        }).populate(
-          'users.idUser'
-        );
+        const board = await Board.findOne({ _id: req.body.boardId })
+          .populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          })
+          .populate('users.idUser');
         return res.json({ board: board });
       } else {
         return res.json({ error: 'Task hoặc bảng không tồn tại !' });
