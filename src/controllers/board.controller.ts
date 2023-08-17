@@ -190,6 +190,47 @@ export default class BoardController {
     }
   }
 
+  static async deleteUserFromBoard(req: any, res: any) {
+    try {
+      console.log(req.body);
+      const boardId = req.body.boardId;
+      const userId = req.body.userId;
+      const board = await Board.findOne({ _id: boardId });
+
+      if (board) {
+        const userInBoardCheck = await Board.findOne({
+          _id: boardId,
+          users: { $elemMatch: { idUser: userId } }
+        });
+        if (userInBoardCheck) {
+          await Board.updateOne(
+            { _id: boardId },
+            { $pull: { users: { idUser: userId } } }
+          );
+          const data = await Board.findOne({ _id: boardId }).populate(
+            'users.idUser'
+          ).populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          });
+          return res.json({
+            message: 'Xóa thành công người dùng khỏi board',
+            board: data
+          });
+        } else {
+          return res.json({
+            error: 'Không tồn tại người dùng trong board!'
+          });
+        }
+      } else {
+        return res.json({ error: 'Có lỗi xảy ra, board không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
+    }
+  }
+
   static async addFileToTask(req: any, res: any) {
     try {
       const task = await Task.findOne({ _id: req.body.taskId });
@@ -253,3 +294,4 @@ export default class BoardController {
     }
   }
 }
+
