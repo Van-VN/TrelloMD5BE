@@ -11,7 +11,7 @@ userRoute.get('/user/info/:userId', UserController.getUserInfo);
 userRoute.put('/user/update/:userId', upload.none(), auth, UserController.updateUser);
 userRoute.put('/user/password/:userId', auth, UserController.resetPassword);
 userRoute.get('/user/confirmEmail/:token', UserController.authEmail);
-userRoute.get('/user/sentNewPassword', UserController.sentNewPassword);
+userRoute.post('/user/sentNewPassword', UserController.sentNewPassword);
 userRoute.get('/user/search', upload.none(), auth, UserController.searchUsers);
 
 export default userRoute;
