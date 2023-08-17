@@ -51,7 +51,9 @@ export default class ColumnController {
         const board = await Board.findOne({ _id: req.body.boardId }).populate({
           path: 'columns',
           populate: { path: 'tasks', model: 'task' }
-        });
+        }).populate(
+          'users.idUser'
+        );
         return res.json({ data: newTask, column: columnToFe, board: board });
       } else {
         return res.json({ error: 'Column không tồn tại!' });
@@ -87,7 +89,9 @@ export default class ColumnController {
         }).populate({
           path: 'columns',
           populate: { path: 'tasks', model: 'task' }
-        });
+        }).populate(
+          'users.idUser'
+        );
         return res.json({ board: boardToFe });
       } else {
         return res.json({ error: 'Cột không tồn tại!' });

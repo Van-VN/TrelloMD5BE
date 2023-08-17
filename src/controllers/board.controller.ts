@@ -110,7 +110,9 @@ export default class BoardController {
         const board = await Board.findOne({ _id: req.body.boardId }).populate({
           path: 'columns',
           populate: { path: 'tasks', model: 'task' }
-        });
+        }).populate(
+          'users.idUser'
+        );
         return res.json({ board: board });
       } else {
         return res.json({ error: 'Bảng không tồn tại!' });
@@ -133,7 +135,9 @@ export default class BoardController {
         const dataToFe = await Board.findOne({ _id: req.body.board }).populate({
           path: 'columns',
           populate: { path: 'tasks', model: 'task' }
-        });
+        }).populate(
+          'users.idUser'
+        );
         return res.json({
           board: dataToFe
         });
@@ -173,7 +177,9 @@ export default class BoardController {
         const board = await Board.findOne({ _id: req.body.boardId }).populate({
           path: 'columns',
           populate: { path: 'tasks', model: 'task' }
-        });
+        }).populate(
+          'users.idUser'
+        );
         return res.json({ board: board });
       } else {
         return res.json({ error: 'Task hoặc bảng không tồn tại !' });
