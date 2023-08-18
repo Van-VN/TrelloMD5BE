@@ -380,4 +380,29 @@ export default class BoardController {
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }
   }
+
+  static async changeColName(req: any, res: any) {
+    try {
+      const board = await Board.findById(req.body.boardId);
+      const column = await Column.findById(req.body.columnId);
+      if (board && column) {
+        await Column.updateOne(
+          { _id: req.body.columnId },
+          { title: req.body.title }
+        );
+        const dataToFe = await Board.findById(req.body.boardId)
+          .populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          })
+          .populate('users.idUser');
+        return res.json({ board: dataToFe });
+      } else {
+        return res.json({ error: 'Bảng hoặc cột không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
 }

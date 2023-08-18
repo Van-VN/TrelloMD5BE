@@ -103,6 +103,12 @@ boardRoute.patch(
   auth,
   BoardController.deleteTask
 );
+boardRoute.patch(
+  '/b/changeColName',
+  upload.none(),
+  auth,
+  BoardController.changeColName
+);
 boardRoute.delete('/b/delete/', auth, BoardController.deleteBoard);
 
 export default boardRoute;
