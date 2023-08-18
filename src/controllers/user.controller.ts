@@ -132,8 +132,7 @@ export default class UserController {
   }
 
   static async updateUser(req: any, res: any) {
-    const userId = req.params.userId
-
+    const userId = req.params.userId;
     try {
       await User.updateOne(
         { _id: userId },
@@ -155,7 +154,6 @@ export default class UserController {
 
   static async resetPassword(req: any, res: any) {
     const userId = req.params.userId
-
     try {
       const user = await User.findOne({
         _id: userId
@@ -179,13 +177,15 @@ export default class UserController {
                 }
               }
             );
-            return res.json({ message: 'Mật khẩu đã được cập nhật' });
+            return res.json({ success: 'Mật khẩu đã được cập nhật' });
           }
         } else {
           return res.json({ message: 'Mật khẩu cũ không đúng' });
         }
       
     } catch (error) {
+      console.log(error);
+      
       return res.json({ message: 'Bạn cần đăng nhập trước đã' });
     }
   }
