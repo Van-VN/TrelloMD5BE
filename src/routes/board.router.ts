@@ -97,5 +97,11 @@ boardRoute.patch(
   auth,
   BoardController.deleteCol
 );
+boardRoute.patch(
+  '/b/deleteTask',
+  upload.none(),
+  auth,
+  BoardController.deleteTask
+);
 
 export default boardRoute;
