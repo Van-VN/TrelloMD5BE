@@ -103,5 +103,6 @@ boardRoute.patch(
   auth,
   BoardController.deleteTask
 );
+boardRoute.delete('/b/delete/', auth, BoardController.deleteBoard);
 
 export default boardRoute;
