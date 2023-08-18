@@ -2,6 +2,7 @@ import Board from '../models/schemas/board.model';
 import Task from '../models/schemas/task.model';
 import User from '../models/schemas/user.model';
 import WorkSpace from '../models/schemas/workspace.model';
+import Column from '../models/schemas/column.model';
 
 export default class BoardController {
   static async createBoard(req: any, res: any) {
@@ -207,12 +208,12 @@ export default class BoardController {
             { _id: boardId },
             { $pull: { users: { idUser: userId } } }
           );
-          const data = await Board.findOne({ _id: boardId }).populate(
-            'users.idUser'
-          ).populate({
-            path: 'columns',
-            populate: { path: 'tasks', model: 'task' }
-          });
+          const data = await Board.findOne({ _id: boardId })
+            .populate('users.idUser')
+            .populate({
+              path: 'columns',
+              populate: { path: 'tasks', model: 'task' }
+            });
           return res.json({
             message: 'Xóa thành công người dùng khỏi board',
             board: data
@@ -293,5 +294,34 @@ export default class BoardController {
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }
   }
-}
 
+  static async deleteCol(req: any, res: any) {
+    try {
+      const board = await Board.findById(req.body.boardId);
+      const column = await Column.findById(req.body.colId);
+
+      if (board && column) {
+        const roleCheck = board.users.find(
+          (item) => item.idUser.toString() === req.body.localUser._id
+        );
+        if (roleCheck.role === 'admin') {
+          await Column.findByIdAndDelete(req.body.colId);
+          const dataToFe = await Board.findById(req.body.boardId)
+            .populate({
+              path: 'columns',
+              populate: { path: 'tasks', model: 'task' }
+            })
+            .populate('users.idUser');
+          return res.json({ board: dataToFe });
+        } else {
+          return res.json({ message: 'Cút' });
+        }
+      } else {
+        return res.json({ error: 'Bảng hoặc cột không tồn tại' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+}
