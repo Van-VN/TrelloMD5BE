@@ -314,10 +314,36 @@ export default class BoardController {
             .populate('users.idUser');
           return res.json({ board: dataToFe });
         } else {
-          return res.json({ message: 'Cút' });
+          return res.json({
+            message: 'Chỉ admin mới có thể xóa được bảng này'
+          });
         }
       } else {
         return res.json({ error: 'Bảng hoặc cột không tồn tại' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async deleteTask(req: any, res: any) {
+    try {
+      const task = await Task.findById(req.body.taskId);
+      const board = await Board.findById(req.body.boardId);
+      if (task && board) {
+        await Task.findByIdAndDelete(req.body.taskId);
+        const dataToFe = await Board.findById(req.body.boardId)
+          .populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          })
+          .populate('users.idUser');
+        return res.json({ board: dataToFe });
+      } else {
+        return res.json({
+          error: 'Có lỗi xảy ra, bảng hoặc task không tồn tại!'
+        });
       }
     } catch (err) {
       console.log(err);
