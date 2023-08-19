@@ -4,10 +4,10 @@ if (process.env.NODE_ENV !== 'production') {
   config();
 }
 
-import { app } from './api';
+import { server } from './api';
 
 const port = process.env.VITE_PORT || 3088;
 
-app.listen(port, () =>
+server.listen(port, () =>
   console.log(`API available on http://localhost:${port}`)
 );
