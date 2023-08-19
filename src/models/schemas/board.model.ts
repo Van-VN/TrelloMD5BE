@@ -9,7 +9,6 @@ const boardSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'user' // Tham chiếu đến collection 'user'
       }
-
     }
   ],
   columns: [
@@ -19,7 +18,8 @@ const boardSchema = new Schema({
     }
   ],
   visibility: { type: String, default: 'public' },
-  backgroundImage: { type: String, default: '2.avif' }
+  backgroundImage: { type: String, default: '2.avif' },
+  notification: []
 });
 
 const Board = model('board', boardSchema);

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 import nodemailer from 'nodemailer';
 import { OAuth2Client } from 'google-auth-library';
+import Board from '../models/schemas/board.model';
 const crypto = require('crypto');
 
 const GOOGLE_MAILER_CLIENT_ID =
@@ -24,7 +25,6 @@ myOAuth2Client.setCredentials({
 });
 
 export default class UserController {
-
   static async createUser(req: any, res: any) {
     try {
       const userCheck = await User.find({ userName: req.body.userName });
@@ -96,7 +96,7 @@ export default class UserController {
             bio: user.bio,
             jobTitle: user.jobTitle,
             email: user.email,
-            authEmail: user.authEmail,
+            authEmail: user.authEmail
           };
 
           return res.json({
@@ -117,7 +117,7 @@ export default class UserController {
   }
 
   static async getUserInfo(req: any, res: any) {
-    const userId = req.params.userId
+    const userId = req.params.userId;
     try {
       const user = await User.findById({
         _id: userId
@@ -153,7 +153,7 @@ export default class UserController {
   }
 
   static async resetPassword(req: any, res: any) {
-    const userId = req.params.userId
+    const userId = req.params.userId;
     try {
       const user = await User.findOne({
         _id: userId
@@ -166,26 +166,24 @@ export default class UserController {
       if (comparePassword) {
         if (req.body.newPassword !== req.body.checkNewPassword) {
           return res.json({ message: 'Mật khẩu mới không trùng nhau' });
-
-          } else {
-            const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
-            await User.updateOne(
-              { _id: userId },
-              {
-                $set: {
-                  ...(req.body.password && { password: hashedPassword })
-                }
-              }
-            );
-            return res.json({ success: 'Mật khẩu đã được cập nhật' });
-          }
         } else {
-          return res.json({ message: 'Mật khẩu cũ không đúng' });
+          const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+          await User.updateOne(
+            { _id: userId },
+            {
+              $set: {
+                ...(req.body.password && { password: hashedPassword })
+              }
+            }
+          );
+          return res.json({ success: 'Mật khẩu đã được cập nhật' });
         }
-      
+      } else {
+        return res.json({ message: 'Mật khẩu cũ không đúng' });
+      }
     } catch (error) {
       console.log(error);
-      
+
       return res.json({ message: 'Bạn cần đăng nhập trước đã' });
     }
   }
@@ -303,6 +301,19 @@ export default class UserController {
         userName: { $regex: searchValue, $options: 'i' }
       });
       return res.json({ data: users });
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau...' });
+    }
+  }
+
+  static async getAllNotification(req: any, res: any) {
+    try {
+      const user = await User.findById(req.params.id);
+      if (!user) return;
+      const notifications = await Board.find({ 'users.idUser': req.params.id });
+      if (!notifications) return;
+      return res.json({ notifications: notifications });
     } catch (err) {
       console.log(err);
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau...' });

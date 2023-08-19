@@ -107,7 +107,15 @@ export default class BoardController {
       if (board) {
         await Board.updateOne(
           { _id: req.body.boardId },
-          { title: req.body.title }
+          {
+            title: req.body.title,
+            $push: {
+              notification: {
+                $each: [req.body.notification],
+                $position: 0
+              }
+            }
+          }
         );
         const board = await Board.findOne({ _id: req.body.boardId })
           .populate({
