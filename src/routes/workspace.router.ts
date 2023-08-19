@@ -48,6 +48,13 @@ workSpaceRoute.put(
   auth,
   WorkSpaceController.updateUserPermission
 );
+
+workSpaceRoute.put(
+  '/workspace/updateStatus',
+  auth,
+  WorkSpaceController.updateStatus
+);
+
 workSpaceRoute.post(
   '/workspace/:id',
   upload.none(),
