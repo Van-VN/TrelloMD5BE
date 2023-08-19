@@ -41,7 +41,7 @@ export default class BoardController {
           workspace.save();
 
           return res.json({
-            message: `create board successfully`,
+            message: `Board created successfully`,
             board: board,
             workspaceId: workspace._id
           });
@@ -344,6 +344,61 @@ export default class BoardController {
         return res.json({
           error: 'Có lỗi xảy ra, bảng hoặc task không tồn tại!'
         });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async deleteBoard(req: any, res: any) {
+    try {
+      const board = await Board.findById(req.query.id);
+      if (board) {
+        const ws = await WorkSpace.findOne({ 'boards.board': req.query.id });
+        const user = board.users.find(
+          (item) => item.idUser.toString() === req.query.u
+        );
+        if (user && user.role === 'admin') {
+          await WorkSpace.updateOne(
+            { 'boards.board': req.query.id },
+            { $pull: { boards: { board: req.query.id } } }
+          );
+          await Board.findByIdAndDelete(req.query.id);
+          const dataToFe = await WorkSpace.findOne({ _id: ws._id });
+          return res.json({ workspace: dataToFe });
+        } else {
+          return res.json({
+            error: 'Bạn không có thẩm quyền thực hiện thao tác này!'
+          });
+        }
+      } else {
+        return res.json({ error: 'Bảng không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async changeColName(req: any, res: any) {
+    try {
+      const board = await Board.findById(req.body.boardId);
+      const column = await Column.findById(req.body.columnId);
+      if (board && column) {
+        await Column.updateOne(
+          { _id: req.body.columnId },
+          { title: req.body.title }
+        );
+        const dataToFe = await Board.findById(req.body.boardId)
+          .populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          })
+          .populate('users.idUser');
+        return res.json({ board: dataToFe });
+      } else {
+        return res.json({ error: 'Bảng hoặc cột không tồn tại!' });
       }
     } catch (err) {
       console.log(err);
