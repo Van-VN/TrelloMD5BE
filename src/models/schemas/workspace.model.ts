@@ -17,7 +17,8 @@ const workspaceSchema = new Schema({
       ref: 'user'
     }
   }],
-  bio: String
+  bio: String,
+  status: { type: String, default: "public"}
 });
 
 const WorkSpace = model('workspace', workspaceSchema);

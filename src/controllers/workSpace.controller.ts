@@ -185,7 +185,32 @@ export default class WorkSpaceController {
       return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
     }
   }
+  static async updateStatus(req: any, res: any) {
+    try {
+      const workSpaceId = req.query.w;
+      const newStatus = req.query.s;
+      const workSpaceCheck = await WorkSpace.findOne({ _id: workSpaceId });
+      if (workSpaceCheck) {
+          await WorkSpace.updateOne(
+            { _id: workSpaceId}, // Tìm workspace và user cần cập nhật
+            { $set: { status: newStatus } }
+          );
 
+          const data = await WorkSpace.findOne({ _id: workSpaceId })
+          
+          return res.json({
+            message: 'Thay đổi thành công status',
+            workspace: data
+          });
+        
+      } else {
+        return res.json({ error: 'Có lỗi xảy ra, workspace không tồn tại!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
+    }
+  }
   static async updateWorkSpace(req: any, res: any) {
     try {
       const ws = await WorkSpace.findOne({ _id: req.params.id }).populate(
