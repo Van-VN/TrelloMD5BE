@@ -12,6 +12,8 @@ import columnRoute from './routes/column.router';
 import columnOrderRoute from './routes/columnOrder.router';
 import boardRoute from './routes/board.router';
 import workSpaceRoute from './routes/workspace.router';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 db.connect()
   .then((res) => {
@@ -19,7 +21,23 @@ db.connect()
   })
   .catch((err) => console.log(err));
 
-export const app = express();
+const app = express();
+export const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*'
+  }
+});
+
+io.on('connection', (socket) => {
+  console.log('Socket is active to be connected!');
+  socket.on('chat', (payload) => {
+    io.emit('chat', payload);
+  });
+  socket.on('drag', (payload) => {
+    io.emit('drag', payload);
+  });
+});
 
 app.use(cors({ origin: true }));
 app.use(express.json());
