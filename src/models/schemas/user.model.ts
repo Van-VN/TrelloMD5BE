@@ -13,7 +13,8 @@ const userSchema = new Schema({
   jobTitle: { type: String, default: 'Employee' },
   email: String,
   authEmail: { type: Boolean, default: false },
-  tokenAuthEmail:  { type: String, default: '' }
+  tokenAuthEmail: { type: String, default: '' },
+  notification: []
 });
 const User = model('user', userSchema);
 

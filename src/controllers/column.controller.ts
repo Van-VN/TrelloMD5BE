@@ -48,12 +48,33 @@ export default class ColumnController {
         const columnToFe = await Column.findOne({
           _id: req.body.columnId
         }).populate('tasks');
-        const board = await Board.findOne({ _id: req.body.boardId }).populate({
-          path: 'columns',
-          populate: { path: 'tasks', model: 'task' }
-        }).populate(
-          'users.idUser'
-        );
+        const board = await Board.findOne({ _id: req.body.boardId })
+          .populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          })
+          .populate('users.idUser');
+
+        // push notifications to user
+
+        const notification = {
+          message: req.body.notification.message,
+          time: req.body.notification.time,
+          board: req.body.notification.board,
+          status: req.body.notification.status
+        };
+
+        const notificationBoard = await Board.findById(
+          req.body.notification.board
+        ).populate('users.idUser');
+
+        for (let user of notificationBoard.users) {
+          await User.updateMany(
+            { _id: user.idUser._id },
+            { $push: { notification: notification } }
+          );
+        }
+
         return res.json({ data: newTask, column: columnToFe, board: board });
       } else {
         return res.json({ error: 'Column không tồn tại!' });
@@ -86,12 +107,33 @@ export default class ColumnController {
         );
         const boardToFe = await Board.findOne({
           _id: req.body.boardId
-        }).populate({
-          path: 'columns',
-          populate: { path: 'tasks', model: 'task' }
-        }).populate(
-          'users.idUser'
-        );
+        })
+          .populate({
+            path: 'columns',
+            populate: { path: 'tasks', model: 'task' }
+          })
+          .populate('users.idUser');
+
+        // push notifications to user
+
+        const notification = {
+          message: req.body.notification.message,
+          time: req.body.notification.time,
+          board: req.body.notification.board,
+          status: req.body.notification.status
+        };
+
+        const notificationBoard = await Board.findById(
+          req.body.notification.board
+        ).populate('users.idUser');
+
+        for (let user of notificationBoard.users) {
+          await User.updateMany(
+            { _id: user.idUser._id },
+            { $push: { notification: notification } }
+          );
+        }
+
         return res.json({ board: boardToFe });
       } else {
         return res.json({ error: 'Cột không tồn tại!' });
@@ -127,14 +169,14 @@ export default class ColumnController {
       const userId = req.body.userId;
       const boardId = req.body.boardId;
       const user = await User.findOne({ _id: userId });
-      const board = await Board.findOne({_id : boardId})
+      const board = await Board.findOne({ _id: boardId });
       if (board && user) {
         const userDupplicateCheck = board.users.some((user) =>
           user.idUser.equals(userId)
         );
         if (!userDupplicateCheck) {
           await Board.updateOne(
-            { _id:  boardId},
+            { _id: boardId },
             { $push: { users: { idUser: userId, role: req.body.roll } } }
           );
           const data = await Board.findOne({ _id: boardId }).populate(
@@ -158,32 +200,36 @@ export default class ColumnController {
     }
   }
 
-  static async changeRole(req: any, res: any){
-    try{
-      let board = await Board.findOne({_id: req.body.boardId}).populate(
+  static async changeRole(req: any, res: any) {
+    try {
+      let board = await Board.findOne({ _id: req.body.boardId }).populate(
         'users.idUser'
       );
-      if(board){
+      if (board) {
         const isIdUser = board.users.some(
-          (user) => (user.idUser._id.toString() === req.body.currentUserId && user.role === "admin")
+          (user) =>
+            user.idUser._id.toString() === req.body.currentUserId &&
+            user.role === 'admin'
         );
-        if (isIdUser){
+        if (isIdUser) {
           board.users = board.users.map((user, index) => {
             if (user.idUser._id.toString() === req.body.idUser) {
               user.role = req.body.role;
             }
             return user;
           });
-          if(board.save()){
-            res.json({ message: "Cập nhật quyền thành công", board: board})
+          if (board.save()) {
+            res.json({ message: 'Cập nhật quyền thành công', board: board });
           }
         } else {
-          res.json({ error: "Bạn không phải admin hoặc không tìm thấy board!"});
+          res.json({
+            error: 'Bạn không phải admin hoặc không tìm thấy board!'
+          });
         }
       } else {
-        res.json({ error: "Bạn không phải admin hoặc không tìm thấy board!"})
+        res.json({ error: 'Bạn không phải admin hoặc không tìm thấy board!' });
       }
-    } catch (err){
+    } catch (err) {
       console.log(err);
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }

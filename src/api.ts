@@ -37,6 +37,9 @@ io.on('connection', (socket) => {
   socket.on('drag', (payload) => {
     io.emit('drag', payload);
   });
+  socket.on('noti', (payload) => {
+    io.emit('noti', payload);
+  });
 });
 
 app.use(cors({ origin: true }));
