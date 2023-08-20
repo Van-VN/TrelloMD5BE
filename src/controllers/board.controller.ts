@@ -108,13 +108,7 @@ export default class BoardController {
         await Board.updateOne(
           { _id: req.body.boardId },
           {
-            title: req.body.title,
-            $push: {
-              notification: {
-                $each: [req.body.notification],
-                $position: 0
-              }
-            }
+            title: req.body.title
           }
         );
         const board = await Board.findOne({ _id: req.body.boardId })
@@ -123,6 +117,27 @@ export default class BoardController {
             populate: { path: 'tasks', model: 'task' }
           })
           .populate('users.idUser');
+
+        // push notifications to user
+
+        const notification = {
+          message: req.body.notification.message,
+          time: req.body.notification.time,
+          board: req.body.notification.board,
+          status: req.body.notification.status
+        };
+
+        const notificationBoard = await Board.findById(
+          req.body.boardId
+        ).populate('users.idUser');
+
+        for (let user of notificationBoard.users) {
+          await User.updateMany(
+            { _id: user.idUser._id },
+            { $push: { notification: notification } }
+          );
+        }
+
         return res.json({ board: board });
       } else {
         return res.json({ error: 'Bảng không tồn tại!' });
@@ -148,6 +163,27 @@ export default class BoardController {
             populate: { path: 'tasks', model: 'task' }
           })
           .populate('users.idUser');
+
+        // push notifications to user
+
+        const notification = {
+          message: req.body.notification.message,
+          time: req.body.notification.time,
+          board: req.body.notification.board,
+          status: req.body.notification.status
+        };
+
+        const notificationBoard = await Board.findById(req.body.board).populate(
+          'users.idUser'
+        );
+
+        for (let user of notificationBoard.users) {
+          await User.updateMany(
+            { _id: user.idUser._id },
+            { $push: { notification: notification } }
+          );
+        }
+
         return res.json({
           board: dataToFe
         });
@@ -201,7 +237,6 @@ export default class BoardController {
 
   static async deleteUserFromBoard(req: any, res: any) {
     try {
-      console.log(req.body);
       const boardId = req.body.boardId;
       const userId = req.body.userId;
       const board = await Board.findOne({ _id: boardId });

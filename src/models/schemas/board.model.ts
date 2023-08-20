@@ -18,8 +18,7 @@ const boardSchema = new Schema({
     }
   ],
   visibility: { type: String, default: 'public' },
-  backgroundImage: { type: String, default: '2.avif' },
-  notification: []
+  backgroundImage: { type: String, default: '2.avif' }
 });
 
 const Board = model('board', boardSchema);
