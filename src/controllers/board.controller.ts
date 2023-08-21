@@ -448,4 +448,32 @@ export default class BoardController {
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }
   }
+
+  static async updateNotificationStatus(req: any, res: any) {
+    try {
+      const user = await User.findById(req.body.userId);
+      if (user) {
+        await User.updateOne(
+          {
+            _id: req.body.userId,
+            'notification.message': req.body.message,
+            'notification.time': req.body.time
+          },
+          {
+            $set: {
+              'notification.$.status': 'true'
+            }
+          }
+        );
+
+        const dataToFe = await User.findById(req.body.userId);
+        return res.json({ data: dataToFe });
+      } else {
+        return res.json({ error: 'User not found!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
 }

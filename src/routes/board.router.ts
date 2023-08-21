@@ -109,6 +109,12 @@ boardRoute.patch(
   auth,
   BoardController.changeColName
 );
+boardRoute.patch(
+  '/b/updateNotificationStatus',
+  upload.none(),
+  auth,
+  BoardController.updateNotificationStatus
+);
 boardRoute.delete('/b/delete/', auth, BoardController.deleteBoard);
 
 export default boardRoute;
