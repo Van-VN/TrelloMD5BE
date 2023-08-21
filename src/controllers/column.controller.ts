@@ -203,6 +203,21 @@ export default class ColumnController {
           const data = await Board.findOne({ _id: boardId }).populate(
             'users.idUser'
           );
+
+          // push notifications to user
+
+          const notification = {
+            message: req.body.notification.message,
+            time: req.body.notification.time,
+            board: req.body.notification.board,
+            status: req.body.notification.status
+          };
+
+          await User.updateOne(
+            { _id: req.body.userId },
+            { $push: { notification: notification } }
+          );
+
           return res.json({
             message: `Thêm người dùng ${user.userName} vào board thành công!`,
             board: data
