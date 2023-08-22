@@ -7,7 +7,7 @@ export default class WorkSpaceController {
   static async listWorkspaces(req: any, res: any) {
     try {
       return res.json({
-        workspaces: await WorkSpace.find({ 'users.idUser': req.params.userId })
+        workspaces: await WorkSpace.find({ 'users.idUser': req.params.userId }).populate('boards.board')
       });
     } catch (err) {
       console.log(err);
