@@ -476,4 +476,24 @@ export default class BoardController {
       return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
     }
   }
+
+  static async taskComment(req: any, res: any) {
+    try {
+      const board = await Board.findById(req.body.boardId);
+      const task = await Task.findById(req.body.task._id);
+      if (task && board) {
+        const user = await User.findById(req.body.user._id);
+        if (user) {
+          console.log('xử lý logic');
+        } else {
+          return res.json({ error: 'User not found!' });
+        }
+      } else {
+        return res.json({ error: 'Task not found!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
 }
