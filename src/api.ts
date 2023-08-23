@@ -22,10 +22,13 @@ db.connect()
   .catch((err) => console.log(err));
 
 const app = express();
+app.use(cors({ origin: true }));
 export const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*'
+    origin: process.env.VITE_CORS_URL || '*',
+    allowedHeaders: ['custom-header']
+    // credentials: true
   }
 });
 
@@ -42,7 +45,6 @@ io.on('connection', (socket) => {
   });
 });
 
-app.use(cors({ origin: true }));
 app.use(express.json());
 app.use(express.raw({ type: 'application/vnd.custom-type' }));
 app.use(express.text({ type: 'text/html' }));
