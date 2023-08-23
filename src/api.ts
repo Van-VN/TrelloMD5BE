@@ -26,9 +26,7 @@ app.use(cors({ origin: true }));
 export const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.VITE_CORS_URL || '*',
-    allowedHeaders: ['custom-header']
-    // credentials: true
+    origin: process.env.VITE_CORS_URL || '*'
   }
 });
 
