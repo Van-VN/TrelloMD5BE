@@ -25,9 +25,7 @@ const app = express();
 export const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: process.env.VITE_CORS_URL,
-    allowedHeaders: 'custom-header',
-    credentials: true
+    origin: '*'
   }
 });
 
@@ -44,7 +42,7 @@ io.on('connection', (socket) => {
   });
 });
 
-// app.use(cors({ origin: true }));
+app.use(cors({ origin: true }));
 app.use(express.json());
 app.use(express.raw({ type: 'application/vnd.custom-type' }));
 app.use(express.text({ type: 'text/html' }));
