@@ -9,7 +9,16 @@ const taskSchema = new Schema({
     }
   ],
   description: String,
-  files: []
+  files: [],
+  comments: [
+    {
+      comment: String,
+      postedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'user' // Tham chiếu đến collection 'user'
+      }
+    }
+  ]
 });
 const Task = model('task', taskSchema);
 

@@ -25,7 +25,7 @@ const app = express();
 export const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*'
+    origin: process.env.VITE_CORS_URL
   }
 });
 

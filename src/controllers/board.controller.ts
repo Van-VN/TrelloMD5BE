@@ -92,7 +92,13 @@ export default class BoardController {
       const board = await Board.findOne({ _id: req.params.id })
         .populate({
           path: 'columns',
-          populate: { path: 'tasks', model: 'task' }
+          populate: {
+            path: 'tasks',
+            model: 'task',
+            populate: {
+              path: 'comments.postedBy'
+            }
+          }
         })
         .populate('users.idUser');
       return res.json({ board: board });
@@ -114,7 +120,13 @@ export default class BoardController {
         const board = await Board.findOne({ _id: req.body.boardId })
           .populate({
             path: 'columns',
-            populate: { path: 'tasks', model: 'task' }
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
           })
           .populate('users.idUser');
 
@@ -127,9 +139,18 @@ export default class BoardController {
           status: req.body.notification.status
         };
 
-        const notificationBoard = await Board.findById(
-          req.body.boardId
-        ).populate('users.idUser');
+        const notificationBoard = await Board.findById(req.body.boardId)
+          .populate({
+            path: 'columns',
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
+          })
+          .populate('users.idUser');
 
         for (let user of notificationBoard.users) {
           await User.updateMany(
@@ -160,7 +181,13 @@ export default class BoardController {
         const dataToFe = await Board.findOne({ _id: req.body.board })
           .populate({
             path: 'columns',
-            populate: { path: 'tasks', model: 'task' }
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
           })
           .populate('users.idUser');
 
@@ -173,9 +200,18 @@ export default class BoardController {
           status: req.body.notification.status
         };
 
-        const notificationBoard = await Board.findById(req.body.board).populate(
-          'users.idUser'
-        );
+        const notificationBoard = await Board.findById(req.body.board)
+          .populate({
+            path: 'columns',
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
+          })
+          .populate('users.idUser');
 
         for (let user of notificationBoard.users) {
           await User.updateMany(
@@ -222,7 +258,13 @@ export default class BoardController {
         const board = await Board.findOne({ _id: req.body.boardId })
           .populate({
             path: 'columns',
-            populate: { path: 'tasks', model: 'task' }
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
           })
           .populate('users.idUser');
         return res.json({ board: board });
@@ -252,11 +294,17 @@ export default class BoardController {
             { $pull: { users: { idUser: userId } } }
           );
           const data = await Board.findOne({ _id: boardId })
-            .populate('users.idUser')
             .populate({
               path: 'columns',
-              populate: { path: 'tasks', model: 'task' }
-            });
+              populate: {
+                path: 'tasks',
+                model: 'task',
+                populate: {
+                  path: 'comments.postedBy'
+                }
+              }
+            })
+            .populate('users.idUser');
           return res.json({
             message: 'Xóa thành công người dùng khỏi board',
             board: data
@@ -295,10 +343,18 @@ export default class BoardController {
         ).exec();
         const boardToFE = await Board.findOne({
           _id: req.body.boardId
-        }).populate({
-          path: 'columns',
-          populate: { path: 'tasks', model: 'task' }
-        });
+        })
+          .populate({
+            path: 'columns',
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
+          })
+          .populate('users.idUser');
         return res.json({ board: boardToFE });
       } else {
         return res.json({ error: 'Bảng hoặc task không tồn tại!' });
@@ -324,10 +380,18 @@ export default class BoardController {
         ).exec();
         const boardToFE = await Board.findOne({
           _id: req.body.boardId
-        }).populate({
-          path: 'columns',
-          populate: { path: 'tasks', model: 'task' }
-        });
+        })
+          .populate({
+            path: 'columns',
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
+          })
+          .populate('users.idUser');
         return res.json({ board: boardToFE });
       } else {
         return res.json({ error: 'Bảng hoặc task không tồn tại!' });
@@ -352,7 +416,13 @@ export default class BoardController {
           const dataToFe = await Board.findById(req.body.boardId)
             .populate({
               path: 'columns',
-              populate: { path: 'tasks', model: 'task' }
+              populate: {
+                path: 'tasks',
+                model: 'task',
+                populate: {
+                  path: 'comments.postedBy'
+                }
+              }
             })
             .populate('users.idUser');
           return res.json({ board: dataToFe });
@@ -379,7 +449,13 @@ export default class BoardController {
         const dataToFe = await Board.findById(req.body.boardId)
           .populate({
             path: 'columns',
-            populate: { path: 'tasks', model: 'task' }
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
           })
           .populate('users.idUser');
         return res.json({ board: dataToFe });
@@ -436,7 +512,13 @@ export default class BoardController {
         const dataToFe = await Board.findById(req.body.boardId)
           .populate({
             path: 'columns',
-            populate: { path: 'tasks', model: 'task' }
+            populate: {
+              path: 'tasks',
+              model: 'task',
+              populate: {
+                path: 'comments.postedBy'
+              }
+            }
           })
           .populate('users.idUser');
         return res.json({ board: dataToFe });
@@ -470,6 +552,46 @@ export default class BoardController {
         return res.json({ data: dataToFe });
       } else {
         return res.json({ error: 'User not found!' });
+      }
+    } catch (err) {
+      console.log(err);
+      return res.json({ error: 'Có lỗi xảy ra, vui lòng thử lại sau!' });
+    }
+  }
+
+  static async taskComment(req: any, res: any) {
+    try {
+      const board = await Board.findById(req.body.boardId);
+      const task = await Task.findById(req.body.task._id);
+      if (task && board) {
+        const user = await User.findById(req.body.user._id);
+        if (user) {
+          const comment = {
+            comment: req.body.comment,
+            postedBy: req.body.user._id
+          };
+          await Task.updateOne(
+            { _id: req.body.task._id },
+            { $push: { comments: comment } }
+          );
+          const dataToFe = await Board.findById(req.body.boardId)
+            .populate({
+              path: 'columns',
+              populate: {
+                path: 'tasks',
+                model: 'task',
+                populate: {
+                  path: 'comments.postedBy'
+                }
+              }
+            })
+            .populate('users.idUser');
+          return res.json({ board: dataToFe });
+        } else {
+          return res.json({ error: 'User not found!' });
+        }
+      } else {
+        return res.json({ error: 'Task not found!' });
       }
     } catch (err) {
       console.log(err);

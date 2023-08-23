@@ -116,5 +116,11 @@ boardRoute.patch(
   BoardController.updateNotificationStatus
 );
 boardRoute.delete('/b/delete/', auth, BoardController.deleteBoard);
+boardRoute.post(
+  '/t/taskComment',
+  upload.none(),
+  auth,
+  BoardController.taskComment
+);
 
 export default boardRoute;
